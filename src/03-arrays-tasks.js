@@ -35,18 +35,16 @@ function findElement(arr, value) {
  *    2 => [ 1, 3 ]
  *    5 => [ 1, 3, 5, 7, 9 ]
  */
-function generateOdds(len) {
-  const arr = [];
-  let num = 1;
-  for (let i = 0; i < len; i += 1) {
-    if (i === 0) {
-      arr.push(num);
-    } else {
-      num += 2;
-      arr.push(num);
+// eslint-disable-next-line no-unused-vars
+function generateOdds(len, array) {
+  const arr = new Array(len).fill(1);
+  // eslint-disable-next-line no-shadow
+  return arr.map((elem, i, array) => {
+    if (array[i - 1]) {
+      return array[i - 1] + 2 * i;
     }
-  }
-  return arr;
+    return elem;
+  });
 }
 
 
