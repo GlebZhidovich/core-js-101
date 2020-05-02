@@ -20,8 +20,12 @@
  *    console.log(r.height);      // => 20
  *    console.log(r.getArea());   // => 200
  */
-function Rectangle(/* width, height */) {
-  throw new Error('Not implemented');
+function Rectangle(width, height) {
+  this.width = width;
+  this.height = height;
+  this.getArea = function () {
+    return this.width * this.height;
+  };
 }
 
 
@@ -35,8 +39,8 @@ function Rectangle(/* width, height */) {
  *    [1,2,3]   =>  '[1,2,3]'
  *    { width: 10, height : 20 } => '{"height":10,"width":20}'
  */
-function getJSON(/* obj */) {
-  throw new Error('Not implemented');
+function getJSON(obj) {
+  return JSON.stringify(obj);
 }
 
 
@@ -51,8 +55,9 @@ function getJSON(/* obj */) {
  *    const r = fromJSON(Circle.prototype, '{"radius":10}');
  *
  */
-function fromJSON(/* proto, json */) {
-  throw new Error('Not implemented');
+function fromJSON(proto, json) {
+  const args = Object.values(JSON.parse(json));
+  return new proto.constructor(...args);
 }
 
 
@@ -111,32 +116,101 @@ function fromJSON(/* proto, json */) {
  */
 
 const cssSelectorBuilder = {
-  element(/* value */) {
-    throw new Error('Not implemented');
+  result: '',
+
+  newElem(pattern) {
+    const builder = { ...cssSelectorBuilder };
+    builder.result += pattern;
+    return builder;
   },
 
-  id(/* value */) {
-    throw new Error('Not implemented');
+  element(value) {
+    const reg = /[#.:[\]]/;
+    if (reg.test(this.result)) {
+      throw new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
+    }
+    if (this.result.length > 0) {
+      throw new Error('Element, id and pseudo-element should not occur more then one time inside the selector');
+    }
+    if (this.result === '') {
+      return this.newElem(value);
+    }
+    this.result += value;
+    return this;
   },
 
-  class(/* value */) {
-    throw new Error('Not implemented');
+  id(value) {
+    const reg = /[.:[\]]/;
+    if (reg.test(this.result)) {
+      throw new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
+    }
+    if (this.result.indexOf('#') !== -1) {
+      throw new Error('Element, id and pseudo-element should not occur more then one time inside the selector');
+    }
+    if (this.result === '') {
+      return this.newElem(`#${value}`);
+    }
+    this.result += `#${value}`;
+    return this;
   },
 
-  attr(/* value */) {
-    throw new Error('Not implemented');
+  class(value) {
+    const reg = /[[\]:]/;
+    if (reg.test(this.result)) {
+      throw new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
+    }
+    if (this.result === '') {
+      return this.newElem(`.${value}`);
+    }
+    this.result += `.${value}`;
+    return this;
   },
 
-  pseudoClass(/* value */) {
-    throw new Error('Not implemented');
+  attr(value) {
+    if (this.result.indexOf(':') !== -1) {
+      throw new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
+    }
+    if (this.result === '') {
+      return this.newElem(`[${value}]`);
+    }
+    this.result += `[${value}]`;
+    return this;
   },
 
-  pseudoElement(/* value */) {
-    throw new Error('Not implemented');
+  pseudoClass(value) {
+    if (this.result.indexOf('::') !== -1) {
+      throw new Error('Selector parts should be arranged in the following order: element, id, class, attribute, pseudo-class, pseudo-element');
+    }
+    if (this.result === '') {
+      return this.newElem(`:${value}`);
+    }
+    this.result += `:${value}`;
+    return this;
   },
 
-  combine(/* selector1, combinator, selector2 */) {
-    throw new Error('Not implemented');
+  pseudoElement(value) {
+    if (this.result.indexOf('::') !== -1) {
+      throw new Error('Element, id and pseudo-element should not occur more then one time inside the selector');
+    }
+    if (this.result === '') {
+      return this.newElem(`::${value}`);
+    }
+    this.result += `::${value}`;
+    return this;
+  },
+
+  combine(selector1, combinator, selector2) {
+    const select1 = selector1.stringify();
+    const select2 = selector2.stringify();
+    if (this.result === '') {
+      return this.newElem(`${select1} ${combinator} ${select2}`);
+    }
+    this.result += `${select1} ${combinator} ${select2}`;
+    return this;
+  },
+
+  stringify() {
+    return this.result;
   },
 };
 
