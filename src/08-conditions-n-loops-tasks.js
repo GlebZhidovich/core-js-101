@@ -418,8 +418,25 @@ function toNaryString(num, n) {
  *   ['/web/src/style.css', '/.bin/mocha',  '/read.me'] => '/'
  *   ['/web/favicon.ico', '/web-scripts/dump', '/webalizer/logs'] => '/'
  */
-function getCommonDirectoryPath(/* pathes */) {
-  throw new Error('Not implemented');
+function getCommonDirectoryPath(pathes) {
+  let [rep] = pathes;
+  function check() {
+    for (let i = 0; i < pathes.length; i += 1) {
+      const idx = rep.lastIndexOf('/');
+      const sub = rep.slice(0, idx + 1);
+      rep = sub;
+      if (!pathes[i].startsWith(sub)) {
+        rep = rep.slice(0, idx);
+        return false;
+      }
+    }
+    return true;
+  }
+  // eslint-disable-next-line no-empty
+  while (!check()) {
+
+  }
+  return rep;
 }
 
 
@@ -476,8 +493,57 @@ function getMatrixProduct(/* m1, m2 */) {
  *    [    ,   ,    ]]
  *
  */
-function evaluateTicTacToePosition(/* position */) {
-  throw new Error('Not implemented');
+// eslint-disable-next-line consistent-return
+function evaluateTicTacToePosition(position) {
+  const [first, second, third] = position;
+  if (first[0] === first[1] && first[1] === first[2] && first[2] === 'X') {
+    return 'X';
+  }
+  if (first[0] === first[1] && first[1] === first[2] && first[2] === '0') {
+    return '0';
+  }
+  if (second[0] === second[1] && second[1] === second[2] && second[2] === 'X') {
+    return 'X';
+  }
+  if (second[0] === second[1] && second[1] === second[2] && second[2] === '0') {
+    return '0';
+  }
+  if (third[0] === third[1] && third[1] === third[2] && third[2] === 'X') {
+    return 'X';
+  }
+  if (third[0] === third[1] && third[1] === third[2] && third[2] === '0') {
+    return '0';
+  }
+  if (first[0] === second[1] && second[1] === third[2] && third[2] === '0') {
+    return '0';
+  }
+  if (first[0] === second[1] && second[1] === third[2] && third[2] === 'X') {
+    return 'X';
+  }
+  if (first[2] === second[1] && second[1] === third[0] && third[0] === 'X') {
+    return 'X';
+  }
+  if (first[2] === second[1] && second[1] === third[0] && third[0] === '0') {
+    return '0';
+  }
+  if (first[0] === second[0] && second[0] === third[0] && third[0] === '0') {
+    return '0';
+  }
+  if (first[0] === second[0] && second[0] === third[0] && third[0] === 'X') {
+    return 'X';
+  }
+  if (first[1] === second[1] && second[1] === third[1] && third[1] === '0') {
+    return '0';
+  }
+  if (first[1] === second[1] && second[1] === third[1] && third[1] === 'X') {
+    return 'X';
+  }
+  if (first[2] === second[2] && second[2] === third[2] && third[2] === '0') {
+    return '0';
+  }
+  if (first[2] === second[2] && second[2] === third[2] && third[2] === 'X') {
+    return 'X';
+  }
 }
 
 

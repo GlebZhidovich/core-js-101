@@ -170,8 +170,9 @@ function logger(func, logFunc) {
       str += result;
     });
     logFunc(`${func.name}(${str}) starts`);
+    const val = func(...args);
     logFunc(`${func.name}(${str}) ends`);
-    return func(...args);
+    return val;
   };
 }
 
